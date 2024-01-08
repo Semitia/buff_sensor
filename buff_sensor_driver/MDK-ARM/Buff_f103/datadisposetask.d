@@ -1,5 +1,6 @@
 buff_f103\datadisposetask.o: ..\Core\Src\dataDisposeTask.c
 buff_f103\datadisposetask.o: ../Core/Inc/dataDisposeTask.h
+buff_f103\datadisposetask.o: ../Core/Inc/flash.h
 buff_f103\datadisposetask.o: ../Core/Inc/main.h
 buff_f103\datadisposetask.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h
 buff_f103\datadisposetask.o: ../Core/Inc/stm32f1xx_hal_conf.h
@@ -44,4 +45,4 @@ buff_f103\datadisposetask.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/
 buff_f103\datadisposetask.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h
 buff_f103\datadisposetask.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/list.h
 buff_f103\datadisposetask.o: D:\WORK\SOFTWARES\MDK5\ARM\ARMCC\Bin\..\include\stdio.h
-buff_f103\datadisposetask.o: ../Core/Inc/flash.h
+buff_f103\datadisposetask.o: ../Core/Inc/adcTask.h

@@ -1,8 +1,6 @@
 #include "adcTask.h"
 
 uint16_t i,j;
-#define ADC1_CHANNEL_CNT 10
-#define ADC1_CHANNEL_FRE 3	
 uint16_t adc1_val_buf[ADC1_CHANNEL_CNT*ADC1_CHANNEL_FRE]; 
 uint32_t adc1_sum_val[ADC1_CHANNEL_CNT] = {0}; 
 uint16_t value[ADC1_CHANNEL_CNT] = {0};

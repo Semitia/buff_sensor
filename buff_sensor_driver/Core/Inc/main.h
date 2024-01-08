@@ -19,9 +19,10 @@ extern "C" {
 typedef __IO uint16_t vu16;
 
 extern ADC_HandleTypeDef hadc1;
-
+extern CAN_HandleTypeDef hcan;
+extern u16 sensor_ID = 0x0000;
 void Error_Handler(void);
-
+void sendCanMsg(uint8_t *msg, uint8_t len)
 
 #ifdef __cplusplus
 }

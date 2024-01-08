@@ -6,6 +6,7 @@ ADC_HandleTypeDef hadc1;
 DMA_HandleTypeDef hdma_adc1;
 CAN_HandleTypeDef hcan;
 UART_HandleTypeDef huart1;
+u16 sensor_ID = 0x0000;
 
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;                   // 初始化任务
@@ -62,13 +63,20 @@ int main(void)
   }
 }
 
-
+u16 id_read = 0x0000;
 void StartDefaultTask(void *argument)
 {
+	STMFLASH_Read(FLASH_SAVE_ADDR,(u16*)&id_read,2);
+  if(id_read == 0xFFFF){
+    STMFLASH_Write(FLASH_SAVE_ADDR,(u16*)&sensor_ID,2);
+  }
+  else{
+    sensor_ID = id_read;
+  }
   /* 创建其他各个任务 */
   adcTaskHandle = osThreadNew(adcTask, NULL, &adcTask_attributes);
   dataDisposeTaskHandle = osThreadNew(dataDisposeTask, NULL, &dataDisposeTask_attributes);
-  canTaskHandle = osThreadNew(canTask, NULL, &canTask_attributes);
+  // canTaskHandle = osThreadNew(canTask, NULL, &canTask_attributes);
   /* 删除默认任务 */
   vTaskDelete(NULL);
 }
@@ -299,7 +307,6 @@ static void MX_CAN_Init(void)
 }
 CAN_TxHeaderTypeDef TXHeader;
 CAN_RxHeaderTypeDef RXHeader;
-
 uint8_t TXmessage[8] = {0x00,0x11,0x22,0x33,0x44,0x55,0x66,0x77};
 uint8_t RXmessage[8];
 uint32_t pTxMailbox = 0;
@@ -312,15 +319,15 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)//接受邮箱0�
     }
 	
 }
-void CAN_senddata(CAN_HandleTypeDef *hcan)
-{
-  TXHeader.StdId=0x00000000;
-  TXHeader.ExtId=0x12345000;
-  TXHeader.DLC=8;
-  TXHeader.IDE=CAN_ID_EXT;
-  TXHeader.RTR=CAN_RTR_DATA;
+
+void sendCanMsg(uint8_t *msg, uint8_t len) {
+  TXHeader.StdId = (0x10 | sensor_ID);
+  TXHeader.ExtId = 0;
+  TXHeader.DLC = len;
+  TXHeader.IDE = CAN_ID_STD;
+  TXHeader.RTR = CAN_RTR_DATA;
   TXHeader.TransmitGlobalTime = DISABLE;
-  HAL_CAN_AddTxMessage(hcan,&TXHeader,TXmessage,&pTxMailbox);
+  HAL_CAN_AddTxMessage(&hcan, &TXHeader, msg, &pTxMailbox);
 }
 
 

@@ -33,7 +33,7 @@ void STMFLASH_Write_NoCheck(u32 WriteAddr,u16 *pBuffer,u16 NumToWrite)
 
 /**
   * 函数功能:从指定地址开始写入指定长度的数据
-  * 输入参数:WriteAddr:起始地址(此地址必须为2的倍数!!)、pBuffer:数据指针、NumToWrite：半字(16位)数(就是要写入的16位数据的个数.)
+  * 输入参数:WriteAddr:起始地址(此地址必须为2的倍数!!)、pBuffer:数据指针、NumToWrite：半字(16位)数(就是要写入的16位数据的个数.我怎么感觉是字节数)
   * 返 回 值: 无
   * 说    明： 
   */
@@ -71,7 +71,8 @@ void STMFLASH_Write(u32 WriteAddr,u16 *pBuffer,u16 NumToWrite)
 				STMFLASH_BUF[i+secoff]=pBuffer[i];	  
 			}
 			STMFLASH_Write_NoCheck(secpos*STM_SECTOR_SIZE+STM32_FLASH_BASE,STMFLASH_BUF,STM_SECTOR_SIZE/2);//写入整个扇区  
-		}else 
+		}
+		else 
 		{
 			FLASH_WaitForLastOperation(FLASH_WAITETIME);       	//等待上次操作完成
 			STMFLASH_Write_NoCheck(WriteAddr,pBuffer,secremain);//写已经擦除了的,直接写入扇区剩余区间. 

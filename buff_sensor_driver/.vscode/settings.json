@@ -5,6 +5,7 @@
         "adctask.h": "c",
         "flash.h": "c",
         "can.h": "c",
-        "datadisposetask.h": "c"
+        "datadisposetask.h": "c",
+        "adc.h": "c"
     }
 }
