@@ -46,4 +46,3 @@ buff_f103\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/list.h
 buff_f103\main.o: D:\WORK\SOFTWARES\MDK5\ARM\ARMCC\Bin\..\include\stdio.h
 buff_f103\main.o: ../Core/Inc/dataDisposeTask.h
 buff_f103\main.o: ../Core/Inc/flash.h
-buff_f103\main.o: ../Core/Inc/can.h

@@ -10,6 +10,7 @@ void change_id(u16 id){
 const uint8_t adcChannel[11] = {10,9,8,7,6,5,0,1,2,3,4};
 TickType_t last_zero_time[11] = {0,0,0,0,0,0,0,0,0,0,0}; //最近的未被击中的时间戳
 u16 ring_state = 0; //第i位对应第i环，0:没被击中，1:被击中
+u8 ring_state_msg[2];
 void dataDisposeTask(void *argument) {
     u8 i;
     while (1){
@@ -26,7 +27,9 @@ void dataDisposeTask(void *argument) {
                 last_zero_time[i] = xTaskGetTickCount();
             }
         }
-        sendCanMsg(ring_state, 2);
+        ring_state_msg[0] = (ring_state >> 8) & 0xff;
+        ring_state_msg[1] = ring_state & 0xff;
+        sendCanMsg(ring_state_msg, 2);
         osDelay(10);
     }
 }

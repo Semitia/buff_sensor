@@ -27,128 +27,11 @@ Project File Date:  01/08/2024
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 3 (build 300)', folder: 'D:\WORK\SOFTWARES\MDK5\ARM\ARMCC\Bin'
 Build target 'Buff_f103'
-compiling flash.c...
-../Core/Inc/flash.h(16): error:  #130: expected a "{"
-  
-..\Core\Src\flash.c(13): warning:  #12-D: parsing restarts here after previous syntax error
-  {
-..\Core\Src\flash.c(14): error:  #118: a void function may not return a value
-  	return *(vu16*)faddr; 
-..\Core\Src\flash.c(14): error:  #20: identifier "faddr" is undefined
-  	return *(vu16*)faddr; 
-..\Core\Src\flash.c(58): warning:  #223-D: function "STMFLASH_Read" declared implicitly
-  		STMFLASH_Read(secpos*STM_SECTOR_SIZE+STM32_FLASH_BASE,STMFLASH_BUF,STM_SECTOR_SIZE/2);//è¯?å‡?æ•?ä¸?æ‰?åŒ?çš?å†?å®?
-..\Core\Src\flash.c(58): error:  #20: identifier "STMFLASH_BUF" is undefined
-  		STMFLASH_Read(secpos*
-TM_SECTOR_SIZE+
-TM32_FLASH_BASE,STMFLASH_BUF,STM_SECTOR_SIZE/2);//è¯?å‡?æ•?ä¸?æ‰?åŒ?çš?å†?å®?
-..\Core\Src\flash.c(65): warning:  #223-D: function "Flash_PageErase" declared implicitly
-  			Flash_PageErase(secpos*STM_SECTOR_SIZE+STM32_FLASH_BASE);	//æ“?é™?è¿?ä¸?æ‰?åŒ?
-..\Core\Src\flash.c(102): error:  #159: declaration is incompatible with previous "STMFLASH_Read" (declared at line 58)
-  void STMFLASH_Read(u32 ReadAddr,u16 *pBuffer,u16 NumToRead)   	
-..\Core\Src\flash.c(107): warning:  #223-D: function "STMFLASH_ReadHalfWord" declared implicitly
-  		pBuffer[i]=STMFLASH_ReadHalfWord(ReadAddr);//è¯?å?2ä¸?å­?èŠ?.
-..\Core\Src\flash.c(118): error:  #159: declaration is incompatible with previous "Flash_PageErase" (declared at line 65)
-  void Flash_PageErase(uint32_t PageAddress)
-..\Core\Src\flash.c(121): error:  #20: identifier "p_Flash" is undefined
-      p_Flash.ErrorCode = HAL_FLASH_ERROR_NONE;
-..\Core\Src\flash.c: 4 warnings, 7 errors
-compiling main.c...
-../Core/Inc/adcTask.h(8): error:  #130: expected a "{"
-  extern uint16_t value[ADC1_CHANNEL_CNT];
-../Core/Src/main.c(13): warning:  #12-D: parsing restarts here after previous syntax error
-  const osThreadAttr_t defaultTask_attributes = {
-../Core/Src/main.c(14): error:  #29: expected an expression
-    .name = "defaultTask",
-../Core/Src/main.c(17): warning:  #12-D: parsing restarts here after previous syntax error
-  };
-../Core/Src/main.c(17): error:  #65: expected a ";"
-  };
-../Core/Src/main.c(57): error:  #20: identifier "defaultTaskHandle" is undefined
-    defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
-../Core/Src/main.c(57): error:  #20: identifier "defaultTask_attributes" is undefined
-    defaultTaskHandle = osThreadNew(StartDefaultTask, 
-ULL, &defaultTask_attributes);
-../Core/Src/main.c(69): warning:  #223-D: function "STMFLASH_Read" declared implicitly
-  	STMFLASH_Read(FLASH_SAVE_ADDR,(u16*)&id_read,2);
-../Core/Src/main.c(71): warning:  #223-D: function "STMFLASH_Write" declared implicitly
-      STMFLASH_Write(FLASH_SAVE_ADDR,(u16*)&sensor_ID,2);
-../Core/Src/main.c(77): error:  #20: identifier "adcTask" is undefined
-    adcTaskHandle = osThreadNew(adcTask, NULL, &adcTask_attributes);
-../Core/Src/main.c(78): error:  #20: identifier "dataDisposeTask" is undefined
-    dataDisposeTaskHandle = osThreadNew(dataDisposeTask, NULL, &dataDisposeTask_attributes);
-../Core/Src/main.c(323): error:  #247: function "sendCanMsg" has already been defined
-  void sendCanMsg(uint8_t *msg, uint8_t len)
-../Core/Src/main.c(351): error:  #20: identifier "huart1" is undefined
-    huart1.Instance = USART1;
-../Core/Src/main.c: 4 warnings, 9 errors
 compiling dataDisposeTask.c...
-../Core/Inc/flash.h(16): error:  #130: expected a "{"
-  
-..\Core\Src\dataDisposeTask.c(3): warning:  #12-D: parsing restarts here after previous syntax error
-  void change_id(
-..\Core\Src\dataDisposeTask.c(5): warning:  #223-D: function "STMFLASH_Write" declared implicitly
-      STMFLASH_Write(FLASH_SAVE_ADDR,(u16*)id,2);//è¦?ç›?å†?å…?æ–?çš?ID
-..\Core\Src\dataDisposeTask.c(17): error:  #20: identifier "value" is undefined
-              if(value[adcChannel[i]] > THRESHOLD ) { //å‡?ä¸?
-..\Core\Src\dataDisposeTask.c(21): warning:  #223-D: function "change_id" declared implicitly
-                      change_id(i);
-..\Core\Src\dataDisposeTask.c(29): error:  #167: argument of type "uint16_t" is incompatible with parameter of type "uint8_t *"
-          sendCanMsg(ring_state, 2);
-..\Core\Src\dataDisposeTask.c: 3 warnings, 4 errors
-compiling freertos.c...
-../Core/Src/freertos.c(4): error: At end of source:  #65: expected a ";"
-../Core/Src/freertos.c: 0 warnings, 1 error
-compiling stm32f1xx_hal_msp.c...
-../Core/Src/stm32f1xx_hal_msp.c(27): error:  #130: expected a "{"
-  extern DMA_HandleTypeDef hdma_adc1;
-../Core/Src/stm32f1xx_hal_msp.c(66): warning:  #12-D: parsing restarts here after previous syntax error
-  {
-../Core/Src/stm32f1xx_hal_msp.c(129): error:  #20: identifier "hdma_adc1" is undefined
-      hdma_adc1.Instance = DMA1_Channel1;
-../Core/Src/stm32f1xx_hal_msp.c: 1 warning, 2 errors
-compiling stm32f1xx_it.c...
-../Core/Inc/stm32f1xx_it.h(49): error:  #130: expected a "{"
-  void NMI_Handler(void);
-../Core/Src/stm32f1xx_it.c(73): warning:  #12-D: parsing restarts here after previous syntax error
-  {
-../Core/Src/stm32f1xx_it.c(172): error:  #20: identifier "hdma_adc1" is undefined
-    HAL_DMA_IRQHandler(&hdma_adc1);
-../Core/Src/stm32f1xx_it.c(214): error:  #20: identifier "htim4" is undefined
-    HAL_TIM_IRQHandler(&htim4);
-../Core/Src/stm32f1xx_it.c: 1 warning, 3 errors
-compiling adcTask.c...
-../Core/Inc/adcTask.h(8): error:  #130: expected a "{"
-  extern uint16_t value[ADC1_CHANNEL_CNT];
-..\Core\Src\adcTask.c(5): warning:  #12-D: parsing restarts here after previous syntax error
-  uint32_t adc1_sum_val[
-DC1_CHANNEL_CNT] = {0}; 
-..\Core\Src\adcTask.c(5): warning:  #174-D: expression has no effect
-  uint32_t adc1_sum_val[
-DC1_CHANNEL_CNT] = {0}; 
-..\Core\Src\adcTask.c(5): error:  #65: expected a ";"
-  uint32_t adc1_sum_val[
-DC1_CHANNEL_CNT] = {0}; 
-..\Core\Src\adcTask.c(9): error:  #20: identifier "adc1_val_buf" is undefined
-      if(HAL_ADC_Start_DMA(&hadc1, (uint32_t*)&adc1_val_buf, (ADC1_CHANNEL_CNT*ADC1_CHANNEL_FRE)) != HAL_OK) {
-..\Core\Src\adcTask.c(14): error:  #20: identifier "i" is undefined
-          for(i=0;i<ADC1_CHANNEL_CNT;i++){
-..\Core\Src\adcTask.c(15): error:  #20: identifier "adc1_sum_val" is undefined
-              adc1_sum_val[i] = 0;
-..\Core\Src\adcTask.c(17): error:  #20: identifier "i" is undefined
-          for(i=0;i<ADC1_CHANNEL_CNT*ADC1_CHANNEL_FRE;i++){
-..\Core\Src\adcTask.c(18): error:  #20: identifier "j" is undefined
-              j = i%ADC1_CHANNEL_CNT;
-..\Core\Src\adcTask.c(19): error:  #20: identifier "adc1_sum_val" is undefined
-              adc1_sum_val[j] += adc1_val_buf[i];
-..\Core\Src\adcTask.c(19): error:  #20: identifier "adc1_val_buf" is undefined
-              adc1_sum_val[j] += adc1_val_buf[i];
-..\Core\Src\adcTask.c(21): error:  #20: identifier "i" is undefined
-          for(i=0;i<ADC1_CHANNEL_CNT;i++){
-..\Core\Src\adcTask.c(22): error:  #20: identifier "adc1_sum_val" is undefined
-              value[i] = adc1_sum_val[i]/ADC1_CHANNEL_FRE;
-..\Core\Src\adcTask.c: 2 warnings, 11 errors
-"Buff_f103\Buff_f103.axf" - 36 Error(s), 15 Warning(s).
+linking...
+Program Size: Code=16220 RO-data=468 RW-data=172 ZI-data=9604  
+FromELF: creating hex file...
+"Buff_f103\Buff_f103.axf" - 0 Error(s), 0 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -166,7 +49,6 @@ Package Vendor: ARM
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE:5.3.0
-Target not created.
 Build Time Elapsed:  00:00:01
 </pre>
 </body>

@@ -1,6 +1,5 @@
 #include "adcTask.h"
 #include "dataDisposeTask.h"
-#include "can.h"
 
 ADC_HandleTypeDef hadc1;
 DMA_HandleTypeDef hdma_adc1;
