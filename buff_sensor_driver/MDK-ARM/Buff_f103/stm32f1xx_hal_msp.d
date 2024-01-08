@@ -42,3 +42,4 @@ buff_f103\stm32f1xx_hal_msp.o: ../Middlewares/Third_Party/FreeRTOS/Source/portab
 buff_f103\stm32f1xx_hal_msp.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h
 buff_f103\stm32f1xx_hal_msp.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h
 buff_f103\stm32f1xx_hal_msp.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/list.h
+buff_f103\stm32f1xx_hal_msp.o: D:\WORK\SOFTWARES\MDK5\ARM\ARMCC\Bin\..\include\stdio.h

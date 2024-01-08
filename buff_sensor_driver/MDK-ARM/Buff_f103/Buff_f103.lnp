@@ -35,6 +35,8 @@
 "buff_f103\port.o"
 "buff_f103\adctask.o"
 "buff_f103\flash.o"
+"buff_f103\datadisposetask.o"
+"buff_f103\can.o"
 --strict --scatter "Buff_f103\Buff_f103.sct"
 --summary_stderr --info summarysizes --map --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers

@@ -6,6 +6,7 @@ uint16_t i,j;
 uint16_t adc1_val_buf[ADC1_CHANNEL_CNT*ADC1_CHANNEL_FRE]; 
 uint32_t adc1_sum_val[ADC1_CHANNEL_CNT] = {0}; 
 uint16_t value[ADC1_CHANNEL_CNT] = {0};
+
 void adcTask(void *argument) {
     if(HAL_ADC_Start_DMA(&hadc1, (uint32_t*)&adc1_val_buf, (ADC1_CHANNEL_CNT*ADC1_CHANNEL_FRE)) != HAL_OK) {
         /* Start Conversation Error */

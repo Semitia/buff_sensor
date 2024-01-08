@@ -1,4 +1,6 @@
 #include "adcTask.h"
+#include "dataDisposeTask.h"
+#include "can.h"
 
 ADC_HandleTypeDef hadc1;
 DMA_HandleTypeDef hdma_adc1;
@@ -6,18 +8,31 @@ CAN_HandleTypeDef hcan;
 UART_HandleTypeDef huart1;
 
 /* Definitions for defaultTask */
-osThreadId_t defaultTaskHandle;
+osThreadId_t defaultTaskHandle;                   // 初始化任务
 const osThreadAttr_t defaultTask_attributes = {
   .name = "defaultTask",
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
-osThreadId_t adcTaskHandle;
+osThreadId_t adcTaskHandle;                       // ADC采样线程
 const osThreadAttr_t adcTask_attributes = {
   .name = "adcTask",
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
+osThreadId_t dataDisposeTaskHandle;               // 数据处理线程
+const osThreadAttr_t dataDisposeTask_attributes = {
+  .name = "dataDisposeTask",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
+};
+osThreadId_t canTaskHandle;                       // CAN通信线程
+const osThreadAttr_t canTask_attributes = {
+  .name = "canTask",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
+};
+
 
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
@@ -52,12 +67,11 @@ void StartDefaultTask(void *argument)
 {
   /* 创建其他各个任务 */
   adcTaskHandle = osThreadNew(adcTask, NULL, &adcTask_attributes);
-  
+  dataDisposeTaskHandle = osThreadNew(dataDisposeTask, NULL, &dataDisposeTask_attributes);
+  canTaskHandle = osThreadNew(canTask, NULL, &canTask_attributes);
   /* 删除默认任务 */
   vTaskDelete(NULL);
 }
-
-
 
 
 /**
@@ -228,64 +242,11 @@ static void MX_ADC1_Init(void)
   {
     Error_Handler();
   }
-  /* USER CODE BEGIN ADC1_Init 2 */
-
-  /* USER CODE END ADC1_Init 2 */
 
 }
 
 
-// void HAL_ADC_MspInit(ADC_HandleTypeDef* adcHandle)
-// {
 
-//   GPIO_InitTypeDef GPIO_InitStruct = {0};
-//   if(adcHandle->Instance==ADC1)
-//   {
-      
-//       __HAL_RCC_ADC1_CLK_ENABLE();
-  
-//       __HAL_RCC_GPIOA_CLK_ENABLE();
-//       __HAL_RCC_GPIOB_CLK_ENABLE();
-//       /**ADC1 GPIO Configuration
-//       PA0-WKUP     ------> ADC1_IN0
-//       PA1     ------> ADC1_IN1
-//       PA2     ------> ADC1_IN2
-//       PA3     ------> ADC1_IN3
-//       PA4     ------> ADC1_IN4
-//       PA5     ------> ADC1_IN5
-//       PA6     ------> ADC1_IN6
-//       PA7     ------> ADC1_IN7
-//       PB0     ------> ADC1_IN8
-//       PB1     ------> ADC1_IN9
-//       */  
-//       GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3 
-//                               |GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7;
-//       GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
-//       GPIO_InitStruct.Pull = GPIO_NOPULL;
-//       HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
-//       GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1;
-//       GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
-//       GPIO_InitStruct.Pull = GPIO_NOPULL;
-//       HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
-
-//       /* ADC1 DMA Init */
-//       /* ADC1 Init */
-//       hdma_adc1.Instance = DMA1_Channel1;
-//       hdma_adc1.Init.Direction = DMA_PERIPH_TO_MEMORY;
-//       hdma_adc1.Init.PeriphInc = DMA_PINC_DISABLE;
-//       hdma_adc1.Init.MemInc = DMA_MINC_ENABLE;
-//       hdma_adc1.Init.PeriphDataAlignment = DMA_PDATAALIGN_HALFWORD;
-//       hdma_adc1.Init.MemDataAlignment = DMA_MDATAALIGN_HALFWORD;
-//       hdma_adc1.Init.Mode = DMA_CIRCULAR;
-//       hdma_adc1.Init.Priority = DMA_PRIORITY_LOW;
-//       if (HAL_DMA_Init(&hdma_adc1) != HAL_OK)
-//       {
-//         Error_Handler();
-//       }
-//       __HAL_LINKDMA(adcHandle,DMA_Handle,hdma_adc1);
-//   }
-// }
 
 /**
   * @brief CAN Initialization Function
@@ -294,14 +255,6 @@ static void MX_ADC1_Init(void)
   */
 static void MX_CAN_Init(void)
 {
-
-  /* USER CODE BEGIN CAN_Init 0 */
-
-  /* USER CODE END CAN_Init 0 */
-
-  /* USER CODE BEGIN CAN_Init 1 */
-
-  /* USER CODE END CAN_Init 1 */
   hcan.Instance = CAN1;
   hcan.Init.Prescaler = 4;
   hcan.Init.Mode = CAN_MODE_NORMAL;
@@ -318,11 +271,59 @@ static void MX_CAN_Init(void)
   {
     Error_Handler();
   }
-  /* USER CODE BEGIN CAN_Init 2 */
+  CAN_FilterTypeDef sFilterConfig;
 
-  /* USER CODE END CAN_Init 2 */
+  sFilterConfig.FilterActivation = ENABLE;//打开过滤器
+  sFilterConfig.FilterBank = 0;//过滤器0 这里可设0-13
+  sFilterConfig.FilterMode = CAN_FILTERMODE_IDMASK;//采用掩码模式
+  sFilterConfig.FilterScale = CAN_FILTERSCALE_32BIT;//采用32位掩码模式
+  sFilterConfig.FilterFIFOAssignment = CAN_FILTER_FIFO0;//采用FIFO0
+
+  sFilterConfig.FilterIdHigh = 0x0000; //设置过滤器ID高16位
+  sFilterConfig.FilterIdLow = 0x0000;//设置过滤器ID低16位
+  sFilterConfig.FilterMaskIdHigh = 0x0000;//设置过滤器掩码高16位
+  sFilterConfig.FilterMaskIdLow = 0x0000;//设置过滤器掩码低16位
+  if(HAL_CAN_ConfigFilter(&hcan,&sFilterConfig) != HAL_OK)//初始化过滤器
+  {
+  Error_Handler();
+  }
+  if(HAL_CAN_Start(&hcan) != HAL_OK)//打开can
+  {
+  Error_Handler();
+  }
+  if(HAL_CAN_ActivateNotification(&hcan,CAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK)//开启接受邮箱0挂起中断
+  {
+  Error_Handler();
+  }
 
 }
+CAN_TxHeaderTypeDef TXHeader;
+CAN_RxHeaderTypeDef RXHeader;
+
+uint8_t TXmessage[8] = {0x00,0x11,0x22,0x33,0x44,0x55,0x66,0x77};
+uint8_t RXmessage[8];
+uint32_t pTxMailbox = 0;
+
+void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)//接受邮箱0挂起中断回调函数
+{
+	if(hcan->Instance==CAN1)
+	{
+		HAL_CAN_GetRxMessage(hcan,CAN_FILTER_FIFO0,&RXHeader,RXmessage);//获取数据
+    }
+	
+}
+void CAN_senddata(CAN_HandleTypeDef *hcan)
+{
+  TXHeader.StdId=0x00000000;
+  TXHeader.ExtId=0x12345000;
+  TXHeader.DLC=8;
+  TXHeader.IDE=CAN_ID_EXT;
+  TXHeader.RTR=CAN_RTR_DATA;
+  TXHeader.TransmitGlobalTime = DISABLE;
+  HAL_CAN_AddTxMessage(hcan,&TXHeader,TXmessage,&pTxMailbox);
+}
+
+
 
 /**
   * @brief USART1 Initialization Function

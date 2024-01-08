@@ -43,3 +43,4 @@ buff_f103\flash.o: ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_
 buff_f103\flash.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h
 buff_f103\flash.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h
 buff_f103\flash.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/list.h
+buff_f103\flash.o: D:\WORK\SOFTWARES\MDK5\ARM\ARMCC\Bin\..\include\stdio.h

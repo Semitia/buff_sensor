@@ -2,6 +2,9 @@
     "files.associations": {
         "main.h": "c",
         "cmsis_os.h": "c",
-        "adctask.h": "c"
+        "adctask.h": "c",
+        "flash.h": "c",
+        "can.h": "c",
+        "datadisposetask.h": "c"
     }
 }
