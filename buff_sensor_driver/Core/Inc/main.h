@@ -21,8 +21,8 @@ typedef __IO uint16_t vu16;
 extern ADC_HandleTypeDef hadc1;
 extern u16 sensor_ID;
 void Error_Handler(void);
-void sendCanMsg(uint8_t *msg, uint8_t len);
-
+// void sendCanMsg(uint8_t *msg, uint8_t len);
+void CAN_SendState(uint8_t *msg, uint8_t len);
 #ifdef __cplusplus
 }
 #endif

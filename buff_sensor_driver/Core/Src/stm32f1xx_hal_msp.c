@@ -196,21 +196,22 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef* hadc)
 * @param hcan: CAN handle pointer
 * @retval None
 */
-void HAL_CAN_MspInit(CAN_HandleTypeDef* hcan)
+void HAL_CAN_MspInit(CAN_HandleTypeDef* canHandle)
 {
+
   GPIO_InitTypeDef GPIO_InitStruct = {0};
-  if(hcan->Instance==CAN1)
+  if(canHandle->Instance==CAN1)
   {
   /* USER CODE BEGIN CAN1_MspInit 0 */
 
   /* USER CODE END CAN1_MspInit 0 */
-    /* Peripheral clock enable */
+    /* CAN1 clock enable */
     __HAL_RCC_CAN1_CLK_ENABLE();
-
+  
     __HAL_RCC_GPIOA_CLK_ENABLE();
-    /**CAN GPIO Configuration
+    /**CAN GPIO Configuration    
     PA11     ------> CAN_RX
-    PA12     ------> CAN_TX
+    PA12     ------> CAN_TX 
     */
     GPIO_InitStruct.Pin = GPIO_PIN_11;
     GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
@@ -223,16 +224,14 @@ void HAL_CAN_MspInit(CAN_HandleTypeDef* hcan)
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
     /* CAN1 interrupt Init */
-    HAL_NVIC_SetPriority(USB_LP_CAN1_RX0_IRQn, 5, 0);
+    HAL_NVIC_SetPriority(USB_LP_CAN1_RX0_IRQn, 1, 0);
     HAL_NVIC_EnableIRQ(USB_LP_CAN1_RX0_IRQn);
-    HAL_NVIC_SetPriority(CAN1_RX1_IRQn, 5, 0);
-    HAL_NVIC_EnableIRQ(CAN1_RX1_IRQn);
   /* USER CODE BEGIN CAN1_MspInit 1 */
 
   /* USER CODE END CAN1_MspInit 1 */
   }
-
 }
+
 
 /**
 * @brief CAN MSP De-Initialization

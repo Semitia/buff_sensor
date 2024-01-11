@@ -1252,6 +1252,11 @@
               <FileType>1</FileType>
               <FilePath>..\Core\Src\flash.c</FilePath>
             </File>
+            <File>
+              <FileName>dataDisposeTask.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\dataDisposeTask.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

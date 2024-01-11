@@ -40,6 +40,8 @@ static void MX_DMA_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_CAN_Init(void);
 static void MX_USART1_UART_Init(void);
+void CAN_Init(void);
+
 void StartDefaultTask(void *argument);
 
 int main(void)
@@ -50,6 +52,7 @@ int main(void)
   MX_DMA_Init();
   MX_ADC1_Init();
   MX_CAN_Init();
+  CAN_Init();
   MX_USART1_UART_Init();
 
   osKernelInitialize();
@@ -76,10 +79,57 @@ void StartDefaultTask(void *argument)
   adcTaskHandle = osThreadNew(adcTask, NULL, &adcTask_attributes);
   dataDisposeTaskHandle = osThreadNew(dataDisposeTask, NULL, &dataDisposeTask_attributes);
   // canTaskHandle = osThreadNew(canTask, NULL, &canTask_attributes);
-  /* 删除默认任务 */
+  
+	/* 删除默认任务 */
   vTaskDelete(NULL);
 }
 
+
+// /**
+//   * @brief System Clock Configuration
+//   * @retval None
+//   */
+// void SystemClock_Config(void)
+// {
+//   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+//   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+//   RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
+
+//   /** Initializes the RCC Oscillators according to the specified parameters
+//   * in the RCC_OscInitTypeDef structure.
+//   */
+//   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+//   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+//   RCC_OscInitStruct.HSEPredivValue = RCC_HSE_PREDIV_DIV1;
+//   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+//   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+//   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+//   RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL3;
+//   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+//   {
+//     Error_Handler();
+//   }
+
+//   /** Initializes the CPU, AHB and APB buses clocks
+//   */
+//   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
+//                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+//   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+//   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+//   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
+//   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+
+//   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
+//   {
+//     Error_Handler();
+//   }
+//   PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_ADC;
+//   PeriphClkInit.AdcClockSelection = RCC_ADCPCLK2_DIV2;
+//   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
+//   {
+//     Error_Handler();
+//   }
+// }
 
 /**
   * @brief System Clock Configuration
@@ -90,23 +140,19 @@ void SystemClock_Config(void)
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
   RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
-
-  /** Initializes the RCC Oscillators according to the specified parameters
-  * in the RCC_OscInitTypeDef structure.
+  /** Initializes the CPU, AHB and APB busses clocks 
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
-  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
-  RCC_OscInitStruct.HSEPredivValue = RCC_HSE_PREDIV_DIV1;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL3;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI_DIV2;
+  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL16;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
     Error_Handler();
   }
-
-  /** Initializes the CPU, AHB and APB buses clocks
+  /** Initializes the CPU, AHB and APB busses clocks 
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
@@ -115,12 +161,12 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
   {
     Error_Handler();
   }
   PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_ADC;
-  PeriphClkInit.AdcClockSelection = RCC_ADCPCLK2_DIV2;
+  PeriphClkInit.AdcClockSelection = RCC_ADCPCLK2_DIV8;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
   {
     Error_Handler();
@@ -253,81 +299,159 @@ static void MX_ADC1_Init(void)
 }
 
 
-
-
-/**
-  * @brief CAN Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_CAN_Init(void)
+void CAN_Init(void)
 {
+	CAN_FilterTypeDef filter;
+	filter.FilterActivation = ENABLE;
+	filter.FilterMode = CAN_FILTERMODE_IDMASK;
+	filter.FilterMode = CAN_FILTERMODE_IDMASK;
+	filter.FilterScale = CAN_FILTERSCALE_32BIT;
+	filter.FilterIdHigh = 0x0000;
+	filter.FilterIdLow = 0x0000;
+	filter.FilterMaskIdHigh = 0x0000;
+	filter.FilterMaskIdLow = 0x0000;
+	filter.FilterBank = 0;
+	filter.FilterFIFOAssignment = CAN_RX_FIFO0;
+	HAL_CAN_ConfigFilter(&hcan, &filter);
+	HAL_CAN_Start(&hcan);
+	HAL_CAN_ActivateNotification(&hcan, CAN_IT_RX_FIFO0_MSG_PENDING);
+}
+
+void CAN_SendState(uint8_t *msg, uint8_t len)
+{
+	CAN_TxHeaderTypeDef header;
+	header.StdId = 0x100;
+	header.IDE = CAN_ID_STD;
+	header.RTR = CAN_RTR_DATA;
+	header.DLC = len;
+	
+	uint32_t mailbox;
+	HAL_CAN_AddTxMessage(&hcan, &header, msg, &mailbox);
+}
+
+void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
+{
+	CAN_RxHeaderTypeDef header;
+	uint8_t rxData[8];
+	if(HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &header, rxData) != HAL_OK)
+		return;
+	
+	// if(header.StdId == 0x100 && motorID <= 4) //ID=1~4½ÓÊÕ0x100Êý¾ÝÖ¡
+	// {
+	// 	targetVotage = *(int16_t*)&rxData[(motorID-1)*2] / 1000.0f;
+	// 	lastRecvTime = HAL_GetTick();
+	// }
+	// else if(header.StdId == 0x200 && motorID > 4) //ID=5~8½ÓÊÕ0x200Êý¾ÝÖ¡
+	// {
+	// 	targetVotage = *(int16_t*)&rxData[(motorID-5)*2] / 1000.0f;
+	// 	lastRecvTime = HAL_GetTick();
+	// }
+}
+
+/* CAN init function */
+void MX_CAN_Init(void)
+{
+
   hcan.Instance = CAN1;
-  hcan.Init.Prescaler = 4;
+  hcan.Init.Prescaler = 2;
   hcan.Init.Mode = CAN_MODE_NORMAL;
   hcan.Init.SyncJumpWidth = CAN_SJW_1TQ;
-  hcan.Init.TimeSeg1 = CAN_BS1_1TQ;
-  hcan.Init.TimeSeg2 = CAN_BS2_1TQ;
+  hcan.Init.TimeSeg1 = CAN_BS1_11TQ;
+  hcan.Init.TimeSeg2 = CAN_BS2_4TQ;
   hcan.Init.TimeTriggeredMode = DISABLE;
   hcan.Init.AutoBusOff = ENABLE;
-  hcan.Init.AutoWakeUp = ENABLE;
-  hcan.Init.AutoRetransmission = DISABLE;
+  hcan.Init.AutoWakeUp = DISABLE;
+  hcan.Init.AutoRetransmission = ENABLE;
   hcan.Init.ReceiveFifoLocked = DISABLE;
   hcan.Init.TransmitFifoPriority = DISABLE;
   if (HAL_CAN_Init(&hcan) != HAL_OK)
   {
     Error_Handler();
   }
-  CAN_FilterTypeDef sFilterConfig;
-
-  sFilterConfig.FilterActivation = ENABLE;//打开过滤器
-  sFilterConfig.FilterBank = 0;//过滤器0 这里可设0-13
-  sFilterConfig.FilterMode = CAN_FILTERMODE_IDMASK;//采用掩码模式
-  sFilterConfig.FilterScale = CAN_FILTERSCALE_32BIT;//采用32位掩码模式
-  sFilterConfig.FilterFIFOAssignment = CAN_FILTER_FIFO0;//采用FIFO0
-
-  sFilterConfig.FilterIdHigh = 0x0000; //设置过滤器ID高16位
-  sFilterConfig.FilterIdLow = 0x0000;//设置过滤器ID低16位
-  sFilterConfig.FilterMaskIdHigh = 0x0000;//设置过滤器掩码高16位
-  sFilterConfig.FilterMaskIdLow = 0x0000;//设置过滤器掩码低16位
-  if(HAL_CAN_ConfigFilter(&hcan,&sFilterConfig) != HAL_OK)//初始化过滤器
-  {
-  Error_Handler();
-  }
-  if(HAL_CAN_Start(&hcan) != HAL_OK)//打开can
-  {
-  Error_Handler();
-  }
-  if(HAL_CAN_ActivateNotification(&hcan,CAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK)//开启接受邮箱0挂起中断
-  {
-  Error_Handler();
-  }
 
 }
-CAN_TxHeaderTypeDef TXHeader;
-CAN_RxHeaderTypeDef RXHeader;
-uint8_t TXmessage[8] = {0x00,0x11,0x22,0x33,0x44,0x55,0x66,0x77};
-uint8_t RXmessage[8];
-uint32_t pTxMailbox = 0;
 
-void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)//接受邮箱0挂起中断回调函数
-{
-	if(hcan->Instance==CAN1)
-	{
-		HAL_CAN_GetRxMessage(hcan,CAN_FILTER_FIFO0,&RXHeader,RXmessage);//获取数据
-    }
+
+
+// /**
+//   * @brief CAN Initialization Function
+//   * @param None
+//   * @retval None
+//   */
+// static void MX_CAN_Init(void)
+// {
+//   hcan.Instance = CAN1;
+//   hcan.Init.Prescaler = 4;
+//   hcan.Init.Mode = CAN_MODE_LOOPBACK;
+//   hcan.Init.SyncJumpWidth = CAN_SJW_1TQ;
+//   hcan.Init.TimeSeg1 = CAN_BS1_1TQ;
+//   hcan.Init.TimeSeg2 = CAN_BS2_1TQ;
+//   hcan.Init.TimeTriggeredMode = DISABLE;
+//   hcan.Init.AutoBusOff = ENABLE;
+//   hcan.Init.AutoWakeUp = ENABLE;
+//   hcan.Init.AutoRetransmission = DISABLE;
+//   hcan.Init.ReceiveFifoLocked = DISABLE;
+//   hcan.Init.TransmitFifoPriority = DISABLE;
+//   if (HAL_CAN_Init(&hcan) != HAL_OK)
+//   {
+//     Error_Handler();
+//   }
+// 	// __HAL_CAN_ENABLE_IT(&hcan, CAN_IT_RX_FIFO0_MSG_PENDING);//开启接受邮箱0挂起中断
+//   // HAL_NVIC_EnableIRQ(CAN1_RX0_IRQn);                      //开启CAN1接受中断
+//   // HAL_NVIC_SetPriority(CAN1_RX0_IRQn, 5, 0);              //设置CAN1接受中断优先级
+//   // __HAL_CAN_ENABLE_IT(&hcan, CAN_IT_TX_MAILBOX_EMPTY);    //开启发送邮箱空中断
+//   // HAL_NVIC_EnableIRQ(CAN1_TX_IRQn);                       //开启CAN1发送中断
+//   // HAL_NVIC_SetPriority(CAN1_TX_IRQn, 5, 0);               //设置CAN1发送中断优先级
+
 	
-}
+//   CAN_FilterTypeDef sFilterConfig;
+//   sFilterConfig.FilterActivation = ENABLE;								//打开过滤器
+//   sFilterConfig.FilterBank = 0;														//过滤器0 这里可设0-13
+//   sFilterConfig.FilterMode = CAN_FILTERMODE_IDMASK;				//采用掩码模式
+//   sFilterConfig.FilterScale = CAN_FILTERSCALE_32BIT;			//采用32位掩码模式
+//   sFilterConfig.FilterFIFOAssignment = CAN_FILTER_FIFO0;	//采用FIFO0
+//   sFilterConfig.FilterIdHigh = 0x0000; 										//设置过滤器ID高16位
+//   sFilterConfig.FilterIdLow = 0x0000;											//设置过滤器ID低16位
+//   sFilterConfig.FilterMaskIdHigh = 0x0000;								//设置过滤器掩码高16位
+//   sFilterConfig.FilterMaskIdLow = 0x0000;									//设置过滤器掩码低16位
+//   if(HAL_CAN_ConfigFilter(&hcan,&sFilterConfig) != HAL_OK)//初始化过滤器
+//   {
+//   Error_Handler();
+//   }
+//   if(HAL_CAN_Start(&hcan) != HAL_OK)//打开can
+//   {
+//   Error_Handler();
+//   }
+//   if(HAL_CAN_ActivateNotification(&hcan,CAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK)//开启接受邮箱0挂起中断
+//   {
+//   Error_Handler();
+//   }
 
-void sendCanMsg(uint8_t *msg, uint8_t len) {
-  TXHeader.StdId = (0x10 | sensor_ID);
-  TXHeader.ExtId = 0;
-  TXHeader.DLC = len;
-  TXHeader.IDE = CAN_ID_STD;
-  TXHeader.RTR = CAN_RTR_DATA;
-  TXHeader.TransmitGlobalTime = DISABLE;
-  HAL_CAN_AddTxMessage(&hcan, &TXHeader, msg, &pTxMailbox);
-}
+// }
+// CAN_TxHeaderTypeDef TXHeader;
+// CAN_RxHeaderTypeDef RXHeader;
+// uint8_t TXmessage[8] = {0x00,0x11,0x22,0x33,0x44,0x55,0x66,0x77};
+// uint8_t RXmessage[8];
+// uint32_t pTxMailbox = 0;
+
+// void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)//接受邮箱0挂起中断回调函数
+// {
+// 	if(hcan->Instance==CAN1)
+// 	{
+// 		HAL_CAN_GetRxMessage(hcan,CAN_FILTER_FIFO0,&RXHeader,RXmessage);//获取数据
+//     }
+	
+// }
+
+// void sendCanMsg(uint8_t *msg, uint8_t len) {
+//   TXHeader.StdId = (0x10 | sensor_ID);
+//   TXHeader.ExtId = 0;
+//   TXHeader.DLC = len;
+//   TXHeader.IDE = CAN_ID_STD;
+//   TXHeader.RTR = CAN_RTR_DATA;
+//   TXHeader.TransmitGlobalTime = DISABLE;
+//   HAL_CAN_AddTxMessage(&hcan, &TXHeader, msg, &pTxMailbox);
+// }
 
 
 
